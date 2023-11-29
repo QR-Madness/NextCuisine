@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using NextCuisine.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<NextCuisineContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NextCuisineContext") ?? throw new InvalidOperationException("Connection string 'NextCuisineContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
