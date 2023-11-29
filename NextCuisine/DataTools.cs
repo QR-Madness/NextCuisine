@@ -6,7 +6,7 @@ namespace NextCuisine
     {
         public static string RandomString(int length)
         {
-            const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string characters = "abcdefghijklmnopqrstuvwxyz0123456789";
             StringBuilder randomString = new StringBuilder();
             Random random = new Random();
 

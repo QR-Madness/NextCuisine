@@ -20,6 +20,15 @@
 
   <ItemGroup>
     <Folder Include="Config\" />
+    <Folder Include="Pages\GuestProfile\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Uploads\Create.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Uploads\Create.cshtml" />
   </ItemGroup>
 
 </Project>

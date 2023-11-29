@@ -56,7 +56,7 @@ namespace NextCuisine.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Uid,Username,Password,RecoveryEmail")] Guest guest)
+        public async Task<IActionResult> Create([Bind("Username,Password,RecoveryEmail")] Guest guest)
         {
             if (ModelState.IsValid)
             {

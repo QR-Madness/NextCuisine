@@ -10,14 +10,16 @@ namespace NextCuisine.Models
         [Key]
         [Column("uid")]
         public string Uid { get; set; } = DataTools.RandomString(10);
+        [Column("creation_date")]
+        public DateTime CreationDateTime { get; set; } = DateTime.Now;
         // this will shadow as a display and login name
         [Column("username")]
-        public string Username { get; set; }
+        public string Username { get; set; } = String.Empty;
         // login password
         [Column("password")]
-        public string Password { get; set; }
+        public string Password { get; set; } = String.Empty;
         // required for password resets 
         [Column("recovery_email")]
-        public string RecoveryEmail { get; set; }
+        public string RecoveryEmail { get; set; } = String.Empty;
     }
 }
