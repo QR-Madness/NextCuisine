@@ -1,13 +1,16 @@
 ﻿using System.Collections.ObjectModel;
+using NextCuisine.Tools;
 
 namespace NextCuisine.Models
 {
     public class GuestProfile
     {
-        public string Uid { get; set; }
-        public string? Name { get; set; }
-        public string? Bio { get; set; }
-        public Collection<GuestUpload> ProfileUploads { get; set; } = new Collection<GuestUpload>();
-        public Collection<GuestUpload> PrivateUploads { get; set; } = new Collection<GuestUpload>();
+        public string Uid { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Bio { get; set; } = string.Empty;
+        public Dictionary<string, string> AdditionalContent { get; set; } = new Dictionary<string, string>()
+        {
+            ["Favorite food"] = ""
+        };
     }
 }

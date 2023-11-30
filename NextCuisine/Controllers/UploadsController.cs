@@ -1,20 +1,32 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Collections.ObjectModel;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
+using NextCuisine.Data;
 using NextCuisine.Models;
 
 namespace NextCuisine.Controllers
 {
     public class UploadsController : Controller
     {
+        private readonly AwsContext _awsContext = new();
+
         // GET: UploadsController
         public ActionResult Index()
         {
-            return View();
+            List<GuestUpload> publicUploads = _awsContext.GetPublicUploads();
+            return View(publicUploads);
         }
 
         // GET: UploadsController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(string id)
         {
+            // todo: check visibility settings and owner uid
+            // todo: get object from context
+            // todo: render page
             return View();
         }
 
@@ -27,13 +39,18 @@ namespace NextCuisine.Controllers
         // POST: UploadsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(",")] GuestUpload upload)
+        public async Task<ActionResult> Create([Bind("Title, ShortDescription, Content")] GuestUpload upload)
         {
-            // todo parse for files
-            // todo set owner uid
+            // TODO Upload files from input
             try
             {
-                // todo add to uploads
+                // set owner uid
+                upload.OwnerUid = HttpContext.Session.GetString("uid") ?? throw new InvalidOperationException();
+                ViewData["LoadText"] = "Uploading now...";
+                // upload object
+                await _awsContext.CreateUpload(upload);
+                ViewData["LoadText"] = "Created!";
+                // send user to ffed
                 return RedirectToAction(nameof(Index));
             }
             catch

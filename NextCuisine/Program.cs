@@ -9,6 +9,7 @@ builder.Services.AddDbContext<NextCuisineContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NextCuisineContext") ?? throw new InvalidOperationException("Connection string 'NextCuisineContext' not found.")));
 
 // Add services to the container.
+builder.Services.AddMvc();
 builder.Services.AddControllersWithViews();
 
 // Configuration authentication sessions

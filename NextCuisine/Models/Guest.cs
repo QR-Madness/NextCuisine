@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NextCuisine.Data;
+using NextCuisine.Tools;
 
 namespace NextCuisine.Models
 {

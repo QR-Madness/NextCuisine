@@ -16,6 +16,7 @@ namespace NextCuisine.Controllers
     public class GuestsController : Controller
     {
         private readonly NextCuisineContext _context;
+        private readonly AwsContext _awsContext = new();
 
         public GuestsController(NextCuisineContext context)
         {
@@ -77,7 +78,10 @@ namespace NextCuisine.Controllers
             // todo check for username conflictions
             if (ModelState.IsValid)
             {
+                // add the user to RDS for authentication
                 _context.Add(guest);
+                // add an empty user profile
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
