@@ -1,4 +1,4 @@
-﻿@model dynamic
+﻿@model List<GuestUpload>
 
 @{
     ViewBag.Title = "Guest Uploads";
@@ -6,3 +6,16 @@
 }
 
 <h2>Guest Uploads</h2>
+
+@foreach (var upload in Model)
+{
+    <div>
+        <h2>@upload.Title</h2>
+        <p>@upload.ShortDescription</p>
+        @if (upload.OwnerUid == Context.Session.GetString("uid"))
+        {
+            <a asp-controller="Uploads" asp-action="Edit" asp-route-id="@upload.Id">Edit my Upload</a>
+            <a asp-controller="Uploads" asp-action="Delete" asp-route-id="@upload.Id">Delete</a>
+        }
+    </div>
+}

@@ -17,11 +17,11 @@
 
                 @if (Context.Session.GetString("uid")?.Length > 0)
                 {
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Public Uploads</a>
-                    <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="Index">My Uploads</a>
-                    <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="Index">Private Uploads</a>
-
-                    <p>&commat;@Context.Session.GetString("username")?.ToString()</p>
+                    <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="Index">Public Uploads</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="MyUploads">My Uploads</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="PrivateUploads">Private Uploads</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="Create">New</a>
+                    <a href="/profile" style="align-self: center;">&commat;@Context.Session.GetString("username")</a>
                 }
                 else
                 {

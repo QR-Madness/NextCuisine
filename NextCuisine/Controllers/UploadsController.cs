@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
@@ -15,10 +17,26 @@ namespace NextCuisine.Controllers
         private readonly AwsContext _awsContext = new();
 
         // GET: UploadsController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            List<GuestUpload> publicUploads = _awsContext.GetPublicUploads();
+            List<GuestUpload> publicUploads = await _awsContext.GetPublicUploads();
             return View(publicUploads);
+        }
+
+        // GET: UploadsController
+        [HttpGet("/private")]
+        public async Task<ViewResult> PrivateUploads()
+        {
+            List<GuestUpload> publicUploads = await _awsContext.GetPrivateUploads(HttpContext.Session.GetString("uid") ?? throw new InvalidOperationException());
+            return View("Index", publicUploads);
+        }
+
+        // GET: UploadsController
+        [HttpGet("/me")]
+        public async Task<ActionResult> MyUploads()
+        {
+            List<GuestUpload> guestUploads = await _awsContext.GetPrivateUploads(HttpContext.Session.GetString("uid") ?? throw new InvalidOperationException());
+            return View("Index", guestUploads);
         }
 
         // GET: UploadsController/Details/5
@@ -39,7 +57,7 @@ namespace NextCuisine.Controllers
         // POST: UploadsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind("Title, ShortDescription, Content")] GuestUpload upload)
+        public async Task<ActionResult> Create([Bind("Title, ShortDescription, Content, Visibility")] GuestUpload upload)
         {
             // TODO Upload files from input
             try
@@ -60,45 +78,48 @@ namespace NextCuisine.Controllers
         }
 
         // GET: UploadsController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(string id)
         {
-            return View();
+            GuestUpload? upload = await _awsContext.GetUpload(id);
+            if (upload == null || upload.OwnerUid != HttpContext.Session.GetString("uid"))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View(upload);
         }
 
         // POST: UploadsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(string id, [Bind("Title, ShortDescription,Content,Visibility")] GuestUpload upload)
         {
             try
             {
+                var originalUpload = await _awsContext.GetUpload(id);
+                if (originalUpload == null || originalUpload.OwnerUid != HttpContext.Session.GetString("uid"))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                Debug.WriteLine($"Edit upload {upload.Id}");
+                await _awsContext.EditUpload(upload);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
                 return View();
             }
         }
 
         // GET: UploadsController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<RedirectToActionResult> Delete(string id)
         {
-            return View();
-        }
-
-        // POST: UploadsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
+            var uploadObject = await _awsContext.GetUpload(id);
+            if (uploadObject != null && uploadObject.OwnerUid == HttpContext.Session.GetString("uid"))
             {
-                return RedirectToAction(nameof(Index));
+                await _awsContext.DeleteUpload(id);
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

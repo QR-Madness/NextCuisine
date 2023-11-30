@@ -4,24 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NextCuisine.Controllers
 {
-    public class GuestProfileController : Controller
+    public class ProfileController : Controller
     {
-        // GET: GuestProfileController
+        // GET: ProfileController
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: GuestProfileController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: ProfileController/Edit/5
+        public IActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: GuestProfileController/Edit/5
+        // POST: ProfileController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult EditUpload(int id, IFormCollection collection)
         {
             try
             {

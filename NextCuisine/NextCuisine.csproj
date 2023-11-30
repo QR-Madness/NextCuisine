@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\GuestProfile\" />
+    <Folder Include="Views\Profile\" />
   </ItemGroup>
 
   <ItemGroup>

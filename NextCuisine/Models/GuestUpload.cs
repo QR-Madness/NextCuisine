@@ -14,7 +14,7 @@ namespace NextCuisine.Models
         public string Title { get; set; } = "Untitled: " + DateTime.Now.ToLongDateString();
         public string ShortDescription { get; set; } = String.Empty;
         public string Content { get; set; } = String.Empty;
-        public Collection<GuestUploadFile> Files { get; set; } = new Collection<GuestUploadFile>();
+        public List<GuestUploadFile> Files { get; set; } = new List<GuestUploadFile>();
         public Dictionary<string, string> AdditionalContent { get; set; } = new Dictionary<string, string>()
         {
             ["UploadStyle"] = "General"

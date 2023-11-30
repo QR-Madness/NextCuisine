@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using NextCuisine.Models;
@@ -53,21 +54,21 @@ namespace NextCuisine.Data
             }
         }
 
-        private static Collection<GuestUploadFile> ConvertAttributeValuesToGuestUploadFiles(List<AttributeValue> files)
+        private static List<GuestUploadFile> ConvertAttributeValuesToGuestUploadFiles(List<AttributeValue> files)
         {
-            return files.Select(fileAttribute => new GuestUploadFile(
+            return files.Select(fileAttribute => new GuestUploadFile
             {
                 Id = DataTools.GetValueOrDefault(fileAttribute.M, "Id"),
                 Filename = DataTools.GetValueOrDefault(fileAttribute.M, "Filename"),
                 UploadDateTime = DataTools.GetDateTimeValueOrDefault(fileAttribute.M, "UploadDateTime")
-            });
+            }).ToList();
         }
 
         public static GuestUpload ConvertAttributeValuesToGuestUpload(Dictionary<string, AttributeValue> attributeValues)
         {
             return new GuestUpload
             {
-                Id = DataTools.GetValueOrDefault(attributeValues, "Id"),
+                Id = DataTools.GetValueOrDefault(attributeValues, "id"),
                 OwnerUid = DataTools.GetValueOrDefault(attributeValues, "OwnerUid"),
                 Visibility = DataTools.GetValueOrDefault(attributeValues, "Visibility"),
                 LastEditTime = DataTools.GetDateTimeValueOrDefault(attributeValues, "LastEditTime"),
@@ -115,6 +116,52 @@ namespace NextCuisine.Data
             };
         }
 
+        public async Task<List<GuestUpload>> GetUploads()
+        {
+            var uploads = await _aws.Db.ScanAsync(new ScanRequest
+            {
+                TableName = "NextCuisine"
+            });
+            return uploads.Items.Select(ConvertAttributeValuesToGuestUpload).ToList();
+        }
+        public async Task<List<GuestUpload>> GetGuestUploads(string uid)
+        {
+            var scanFilter = new ScanFilter();
+            scanFilter.AddCondition("OwnerUid", ScanOperator.Equal, uid);
+            var uploads = await _aws.Db.ScanAsync(new ScanRequest
+            {
+                TableName = "NextCuisine",
+                ScanFilter = scanFilter.ToConditions()
+            });
+            return uploads.Items.Select(ConvertAttributeValuesToGuestUpload).ToList();
+        }
+
+        public async Task<List<GuestUpload>> GetPublicUploads()
+        {
+            var scanFilter = new ScanFilter();
+            scanFilter.AddCondition("Visibility", ScanOperator.Equal, "Public");
+            var search = await _aws.Db.ScanAsync(new ScanRequest()
+            {
+                ScanFilter = scanFilter.ToConditions(),
+                TableName = "NextCuisine"
+            });
+            return search.Items.Select(ConvertAttributeValuesToGuestUpload).ToList();
+        }
+
+        public async Task<List<GuestUpload>> GetPrivateUploads(string uid)
+        {
+            var scanFilter = new ScanFilter();
+            scanFilter.AddCondition("Visibility", ScanOperator.Equal, "Private");
+            scanFilter.AddCondition("OwnerUid", ScanOperator.Equal, uid);
+            var search = await _aws.Db.ScanAsync(new ScanRequest()
+            {
+                ScanFilter = scanFilter.ToConditions(),
+                TableName = "NextCuisine"
+            });
+            var uploadsAttributes = search.Items;
+            return uploadsAttributes.Select(ConvertAttributeValuesToGuestUpload).ToList();
+        }
+
         public Task<PutItemResponse> CreateUpload(GuestUpload newUpload)
         {
             return _aws.Db.PutItemAsync(new PutItemRequest()
@@ -138,7 +185,7 @@ namespace NextCuisine.Data
             return _aws.Db.UpdateItemAsync(new UpdateItemRequest()
             {
                 TableName = "NextCuisineProfiles",
-                AttributeUpdates = ConvertProfileToDocument(guestProfile).ToAttributeUpdateMap(false)
+                AttributeUpdates = ConvertProfileToDocument(guestProfile).ToAttributeUpdateMap(true)
             });
         }
 
@@ -156,17 +203,16 @@ namespace NextCuisine.Data
             return upload == null ? null : ConvertAttributeValuesToGuestUpload(upload);
         }
 
-        public GuestUpload? GetUpload(string id)
+        public async Task<GuestUpload?> GetUpload(string id)
         {
             var scanFilter = new ScanFilter();
             scanFilter.AddCondition("id", ScanOperator.Equal, id);
-            var search = _aws.Db.ScanAsync(new ScanRequest()
+            var search = await _aws.Db.ScanAsync(new ScanRequest()
             {
                 ScanFilter = scanFilter.ToConditions(),
                 TableName = "NextCuisine"
             });
-            var uploadsAttributes = search.Result.Items;
-            var upload = uploadsAttributes.FirstOrDefault();
+            var upload = search.Items.FirstOrDefault();
             return upload == null ? null : ConvertAttributeValuesToGuestUpload(upload);
         }
 
@@ -177,37 +223,19 @@ namespace NextCuisine.Data
                 TableName = "NextCuisine",
                 Key = new Dictionary<string, AttributeValue>()
                 {
-                    ["Id"] = new AttributeValue() { S = modifiedUpload.Id }
+                    ["id"] = new AttributeValue() { S = modifiedUpload.Id }
                 },
                 AttributeUpdates = ConvertUploadToDocument(modifiedUpload).ToAttributeUpdateMap(false)
             });
         }
 
-        public List<GuestUpload?> GetPublicUploads()
+        public Task<DeleteItemResponse> DeleteUpload(string id)
         {
-            var scanFilter = new ScanFilter();
-            scanFilter.AddCondition("Visibility", ScanOperator.Equal, "Public");
-            var search = _aws.Db.ScanAsync(new ScanRequest()
+            return _aws.Db.DeleteItemAsync(new DeleteItemRequest()
             {
-                ScanFilter = scanFilter.ToConditions(),
-                TableName = "NextCuisine"
+                TableName = "NextCuisine",
+                Key = new Dictionary<string, AttributeValue>() { { "id", new AttributeValue() { S = id } } }
             });
-            var uploadsAttributes = search.Result.Items;
-            return uploadsAttributes.Select(ConvertAttributeValuesToGuestUpload).ToList();
-        }
-
-        public List<GuestUpload?> GetPrivateUploads(string uid)
-        {
-            var scanFilter = new ScanFilter();
-            scanFilter.AddCondition("Visibility", ScanOperator.Equal, "Private");
-            scanFilter.AddCondition("OwnerUid", ScanOperator.Equal, uid);
-            var search = _aws.Db.ScanAsync(new ScanRequest()
-            {
-                ScanFilter = scanFilter.ToConditions(),
-                TableName = "NextCuisine"
-            });
-            var uploadsAttributes = search.Result.Items;
-            return uploadsAttributes.Select(ConvertAttributeValuesToGuestUpload).ToList();
         }
     }
 }
