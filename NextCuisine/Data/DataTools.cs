@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace NextCuisine
+namespace NextCuisine.Data
 {
     public class DataTools
     {

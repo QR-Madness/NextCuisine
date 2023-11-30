@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NextCuisine.Models;
 
 namespace NextCuisine.Controllers
 {
@@ -26,15 +27,18 @@ namespace NextCuisine.Controllers
         // POST: UploadsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([Bind(",")] GuestUpload upload)
         {
+            // todo parse for files
+            // todo set owner uid
             try
             {
+                // todo add to uploads
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(upload);
             }
         }
 

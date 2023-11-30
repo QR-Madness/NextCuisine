@@ -1,0 +1,13 @@
+﻿@model Guest
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "_Layout";
+}
+
+<h2>Login to your NextCuisine Guest Account</h2>
+<form method="post">
+    <input placeholder="Username" asp-for="Username" value="@Model?.Username"/>
+    <input placeholder="Password" asp-for="Password" value="@Model?.Password"/>
+    <button type="submit">Log me in</button>
+</form>

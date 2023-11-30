@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NextCuisine.Data;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<NextCuisineContext>(options =>
@@ -7,6 +10,22 @@ builder.Services.AddDbContext<NextCuisineContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Configuration authentication sessions
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.Cookie.Name = "uid";
+    options.LoginPath = "/guests/login";
+});
+builder.Services.AddDistributedMemoryCache();
+// Configure the user session
+builder.Services.AddSession(options =>
+{
+    // Set a short timeout for easy testing.
+    options.IdleTimeout = TimeSpan.FromHours(24);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
 
 var app = builder.Build();
 
@@ -22,8 +41,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
+app.UseSession();
+
+app.UseAuthentication();
 
 app.MapControllerRoute(
     name: "default",

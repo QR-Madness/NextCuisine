@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using Microsoft.VisualBasic;
+using NextCuisine.Data;
 
 namespace NextCuisine.Models
 {

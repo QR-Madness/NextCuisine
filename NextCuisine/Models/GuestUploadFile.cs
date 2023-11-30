@@ -1,4 +1,6 @@
-﻿namespace NextCuisine.Models
+﻿using NextCuisine.Data;
+
+namespace NextCuisine.Models
 {
     public class GuestUploadFile
     {

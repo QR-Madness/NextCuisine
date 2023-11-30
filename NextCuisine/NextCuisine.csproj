@@ -28,7 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Guests\Login.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Uploads\Create.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Guests\Login.cshtml" />
   </ItemGroup>
 
 </Project>
