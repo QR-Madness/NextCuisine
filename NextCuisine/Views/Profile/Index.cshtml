@@ -1,8 +1,36 @@
-﻿@model dynamic
+﻿@model GuestProfile
 
 @{
     ViewBag.Title = "My Profile";
     Layout = "_Layout";
 }
+@if (Context.Session.GetString("uid") == Model.Uid)
+{
+    <a asp-controller="Guests" asp-action="Logout">Logout</a>
+}
+<h2>My Profile</h2>
+<div>
+    @* Personal Info *@
+    <h2>@Model.Name</h2>
+    <p>
+        @Model.Bio
+    </p>
 
-<h2>title</h2>
+    @* Additional Preferences *@
+    <h4>Favorite Recipes</h4>
+    <p>
+        @Model.FavoriteRecipes
+    </p>
+    <h4>Favorite Snacks</h4>
+    <p>
+        @Model.FavoriteSnacks
+    </p>
+    <h4>Good Combos</h4>
+    <p>
+        @Model.GoodCombos
+    </p>
+</div>
+@if (Context.Session.GetString("uid") == Model.Uid)
+{
+    <a asp-controller="Profile" asp-action="EditPage" asp-route-id="@Model.Uid">Edit my Profile</a>
+}

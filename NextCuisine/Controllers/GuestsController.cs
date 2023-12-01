@@ -39,9 +39,9 @@ namespace NextCuisine.Controllers
         // GET: Guests
         public async Task<IActionResult> Index()
         {
-            return _context.Guest != null ?
-                        View(await _context.Guest.ToListAsync()) :
-                        Problem("Entity set 'NextCuisineContext.Guest'  is null.");
+            return _context.Guest != null
+                ? View(await _context.Guest.ToListAsync())
+                : Problem("Entity set 'NextCuisineContext.Guest'  is null.");
         }
 
         // GET: Guests/Details/5
@@ -81,10 +81,11 @@ namespace NextCuisine.Controllers
                 // add the user to RDS for authentication
                 _context.Add(guest);
                 // add an empty user profile
-                
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(guest);
         }
 
@@ -93,6 +94,7 @@ namespace NextCuisine.Controllers
         {
             return View();
         }
+
         // POST: Guests/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -107,10 +109,18 @@ namespace NextCuisine.Controllers
             {
                 return View(guest);
             }
+
             // authenticate session (via cookies) for 24 hours
             GuestSessionCreate(guestMatch.Uid, guestMatch.Username);
             // redirect to main page
             return Redirect("/uploads");
+        }
+
+        [HttpGet("/logout")]
+        public IActionResult Logout()
+        {
+            GuestSessionDelete();
+            return Redirect("/");
         }
 
         // GET: Guests/Edit/5

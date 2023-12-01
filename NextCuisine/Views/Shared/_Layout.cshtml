@@ -21,7 +21,9 @@
                     <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="MyUploads">My Uploads</a>
                     <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="PrivateUploads">Private Uploads</a>
                     <a class="navbar-brand" asp-area="" asp-controller="Uploads" asp-action="Create">New</a>
-                    <a href="/profile" style="align-self: center;">&commat;@Context.Session.GetString("username")</a>
+                    <a style="align-self: center;" asp-area="" asp-controller="Profile" asp-action="Index">
+                        &commat;@Context.Session.GetString("username")
+                    </a>
                 }
                 else
                 {

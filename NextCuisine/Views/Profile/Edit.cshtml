@@ -1,8 +1,34 @@
-﻿@model dynamic
+﻿@model GuestProfile
 
 @{
     ViewBag.Title = "Edit my Profile";
     Layout = "_Layout";
 }
 
-<h2>title</h2>
+<h2>Edit my Profile</h2>
+
+<form method="post" asp-controller="Profile" asp-action="EditPost">
+    @* Personal Info *@
+    <h4>Name</h4>
+    <input asp-for="Name" placeholder="Name" />
+    <h3>Bio</h3>
+    <textarea asp-for="Bio" placeholder="Write a little snippet about yourself.">
+        @Model.Bio
+    </textarea>
+    @* Additional Preferences *@
+    <h4>Favorite Recipes</h4>
+    <textarea asp-for="FavoriteRecipes" placeholder="List some of the good recipes you've come by?">
+        @Model.FavoriteRecipes
+    </textarea>
+    <h4>Favorite Snacks</h4>
+    <textarea asp-for="FavoriteSnacks" placeholder="What are your go-to snacks?">
+        @Model.FavoriteSnacks
+    </textarea>
+    <h4>Good Combos</h4>
+    <textarea asp-for="GoodCombos" placeholder="What are some good, or suprising flavor combos you've come across?">
+        @Model.GoodCombos
+    </textarea>
+    @* Submit *@
+    <button type="submit">Save</button>
+</form>
+
