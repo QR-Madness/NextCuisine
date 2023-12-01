@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Uid" />
             <div class="form-group">
@@ -34,11 +34,16 @@
         </form>
     </div>
 </div>
-
+<p>
+    @ViewBag.Status
+</p>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Profile" asp-action="Index">Back to Profile</a>
+    <a asp-action="Delete">Delete my Account</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

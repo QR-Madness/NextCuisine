@@ -59,16 +59,20 @@ namespace NextCuisine.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind("Title, ShortDescription, Content, Visibility")] GuestUpload upload)
         {
-            // TODO Upload files from input
             try
             {
                 // set owner uid
                 upload.OwnerUid = HttpContext.Session.GetString("uid") ?? throw new InvalidOperationException();
                 ViewData["LoadText"] = "Uploading now...";
-                // upload object
+                // upload model object
                 await _awsContext.CreateUpload(upload);
+                // upload included files
+                if (Request.Form.Files.Count > 0)
+                {
+
+                }
                 ViewData["LoadText"] = "Created!";
-                // send user to ffed
+                // send user to feed
                 return RedirectToAction(nameof(Index));
             }
             catch

@@ -81,6 +81,11 @@ namespace NextCuisine.Data
             };
         }
 
+        /// <summary>
+        /// Parse/convert DB attribute values
+        /// </summary>
+        /// <param name="attributeValues"></param>
+        /// <returns>Populated Model Object</returns>
         public static GuestProfile ConvertAttributeValuesToGuestProfile(Dictionary<string, AttributeValue> attributeValues)
         {
             return new GuestProfile
@@ -88,31 +93,39 @@ namespace NextCuisine.Data
                 Uid = DataTools.GetValueOrDefault(attributeValues, "Uid"),
                 Name = DataTools.GetValueOrDefault(attributeValues, "Name"),
                 Bio = DataTools.GetValueOrDefault(attributeValues, "Bio"),
-                AdditionalContent = DataTools.ConvertAttributeValuesToDictionary(attributeValues["AdditionalContent"].M)
+                FavoriteRecipes = DataTools.GetValueOrDefault(attributeValues, "FavoriteRecipes"),
+                FavoriteSnacks = DataTools.GetValueOrDefault(attributeValues, "FavoriteSnacks"),
+                GoodCombos = DataTools.GetValueOrDefault(attributeValues, "GoodCombos")
+                //AdditionalContent = DataTools.ConvertAttributeValuesToDictionary(attributeValues["AdditionalContent"].M)
             };
         }
 
         /// <summary>
-        /// 
+        /// Convert a profile model object 
         /// </summary>
         /// <param name="profile"></param>
-        /// <returns></returns>
+        /// <returns>Document for AWS operations</returns>
         private Document ConvertProfileToDocument(GuestProfile profile)
         {
             List<Document> additionalContentDocument = new List<Document>();
-            foreach (KeyValuePair<string, string> contentItem in profile.AdditionalContent)
-            {
-                additionalContentDocument.Add(new Document()
-                {
-                    [contentItem.Key] = contentItem.Value
-                });
-            }
+            // ARCHIVED CODE
+            //foreach (KeyValuePair<string, string> contentItem in profile.AdditionalContent)
+            //{
+            //    additionalContentDocument.Add(new Document()
+            //    {
+            //        [contentItem.Key] = contentItem.Value
+            //    });
+            //}
+            // END OF ARCHIVED CODE
             return new Document()
             {
-                ["Uid"] = profile.Uid,
+                //["Uid"] = profile.Uid,
                 ["Name"] = profile.Name,
                 ["Bio"] = profile.Bio,
-                ["AdditionalContent"] = additionalContentDocument
+                ["FavoriteSnacks"] = profile.FavoriteSnacks,
+                ["FavoriteRecipes"] = profile.FavoriteRecipes,
+                ["GoodCombos"] = profile.GoodCombos
+                //["AdditionalContent"] = additionalContentDocument
             };
         }
 
@@ -171,36 +184,40 @@ namespace NextCuisine.Data
             });
         }
 
-        public Task<PutItemResponse> CreateProfile(GuestProfile guestProfile)
+        public async Task<PutItemResponse> CreateProfile(GuestProfile guestProfile)
         {
-            return _aws.Db.PutItemAsync(new PutItemRequest()
+            return await _aws.Db.PutItemAsync(new PutItemRequest()
             {
                 TableName = "NextCuisineProfiles",
                 Item = ConvertProfileToDocument(guestProfile).ToAttributeMap()
             });
         }
 
-        public Task<UpdateItemResponse> EditProfile(GuestProfile guestProfile)
+        public async Task<UpdateItemResponse> EditProfile(string uid, GuestProfile guestProfile)
         {
-            return _aws.Db.UpdateItemAsync(new UpdateItemRequest()
+            return await _aws.Db.UpdateItemAsync(new UpdateItemRequest()
             {
+                Key = new Dictionary<string, AttributeValue>()
+                {
+                    ["Uid"] = new AttributeValue(uid)
+                },
                 TableName = "NextCuisineProfiles",
                 AttributeUpdates = ConvertProfileToDocument(guestProfile).ToAttributeUpdateMap(true)
             });
         }
 
-        public GuestUpload? GetProfile(string uid)
+        public async Task<GuestProfile?> GetProfile(string uid)
         {
             var scanFilter = new ScanFilter();
             scanFilter.AddCondition("Uid", ScanOperator.Equal, uid);
-            var search = _aws.Db.ScanAsync(new ScanRequest()
+            var search = await _aws.Db.ScanAsync(new ScanRequest()
             {
                 ScanFilter = scanFilter.ToConditions(),
                 TableName = "NextCuisineProfiles"
             });
-            var uploadsAttributes = search.Result.Items;
+            var uploadsAttributes = search.Items;
             var upload = uploadsAttributes.FirstOrDefault();
-            return upload == null ? null : ConvertAttributeValuesToGuestUpload(upload);
+            return upload == null ? null : ConvertAttributeValuesToGuestProfile(upload);
         }
 
         public async Task<GuestUpload?> GetUpload(string id)
