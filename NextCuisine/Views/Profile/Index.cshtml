@@ -33,4 +33,5 @@
 @if (Context.Session.GetString("uid") == Model.Uid)
 {
     <a asp-controller="Profile" asp-action="EditPage" asp-route-id="@Model.Uid">Edit my Profile</a>
+    <a asp-controller="Guests" asp-action="Edit">Account Settings</a>
 }

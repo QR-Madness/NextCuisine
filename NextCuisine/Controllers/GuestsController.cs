@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -123,53 +124,45 @@ namespace NextCuisine.Controllers
             return Redirect("/");
         }
 
-        // GET: Guests/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        // GET: Guests/Edit
+        public async Task<IActionResult> Edit()
         {
-            if (id == null || _context.Guest == null)
+            try
             {
-                return NotFound();
+                var id = HttpContext.Session.GetString("uid") ?? throw new AuthenticationException();
+                var guest = await _context.Guest.FindAsync(id);
+                if (guest == null)
+                {
+                    return RedirectToAction(nameof(Create));
+                }
+                return View(guest);
             }
-
-            var guest = await _context.Guest.FindAsync(id);
-            if (guest == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Login));
             }
-            return View(guest);
         }
 
         // PATCH: Guests/Edit/5
-        [HttpPatch]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Username,Password,RecoveryEmail")] Guest guest)
+        public async Task<IActionResult> Edit([Bind("Username,Password,RecoveryEmail")] Guest guest)
         {
-            if (id != guest.Uid)
+            try
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                guest.Uid = HttpContext.Session.GetString("uid") ?? throw new AuthenticationException();
+                if (ModelState.IsValid)
                 {
                     _context.Update(guest);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GuestExists(guest.Uid))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ViewBag.Status = "Saved!";
+                return View(guest);
             }
-            return View(guest);
+            catch (Exception ex)
+            {
+                return RedirectToAction(nameof(Login));
+            }
         }
 
         // GET: Guests/Delete/5
@@ -179,33 +172,29 @@ namespace NextCuisine.Controllers
             {
                 return NotFound();
             }
-
             var guest = await _context.Guest
                 .FirstOrDefaultAsync(m => m.Uid == id);
             if (guest == null)
             {
                 return NotFound();
             }
-
             return View(guest);
         }
 
-        // POST: Guests/Delete/5
+        // POST: Guests/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed()
         {
-            if (_context.Guest == null)
-            {
-                return Problem("Entity set 'NextCuisineContext.Guest'  is null.");
-            }
+            var id = HttpContext.Session.GetString("uid");
             var guest = await _context.Guest.FindAsync(id);
             if (guest != null)
             {
                 _context.Guest.Remove(guest);
             }
-
             await _context.SaveChangesAsync();
+            // TODO Delete Profile and S3 Uploads
+
             return RedirectToAction(nameof(Index));
         }
 
