@@ -7,8 +7,9 @@
 
 <h2>Upload</h2>
 
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" asp-controller="Uploads" asp-action="Create">
     @Html.AntiForgeryToken()
+    <p>@ViewData["LoadText"]</p>
 
     <input asp-for="Title" placeholder="Upload Title" maxlength="80" />
     <br />
@@ -18,13 +19,11 @@
     </textarea>
 
     <h4>Upload Some Files</h4>
-    <input type="file" name="FileInput" />
+    <input type="file" name="FileInput" multiple/>
+    <button type="submit">Post</button>
 
     <select asp-for="Visibility">
         <option value="Public">Public</option>
         <option value="Private">Private</option>
     </select>
-
-    <button type="submit">Post</button>
-    <p>@ViewData["LoadText"]</p>
 </form>

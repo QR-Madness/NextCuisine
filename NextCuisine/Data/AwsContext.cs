@@ -1,10 +1,15 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
+using Amazon.S3;
+using Amazon.S3.Model;
 using NextCuisine.Models;
 using NextCuisine.Tools.ServiceTools;
 using NextCuisine.Tools;
+using Amazon.S3.Transfer;
+using Microsoft.AspNetCore.Mvc;
 
 namespace NextCuisine.Data
 {
@@ -23,6 +28,7 @@ namespace NextCuisine.Data
             List<Document> uploadFilesDocumentList = new List<Document>();
             foreach (GuestUploadFile file in upload.Files)
             {
+                Debug.WriteLine(file.Id);
                 uploadFilesDocumentList.Add(new Document()
                 {
                     ["Id"] = file.Id,
@@ -31,6 +37,7 @@ namespace NextCuisine.Data
                     ["UploadDateTime"] = file.UploadDateTime
                 });
             }
+
             List<Document> additionalContentDocumentList = new List<Document>();
             return new Document()
             {
@@ -60,11 +67,13 @@ namespace NextCuisine.Data
             {
                 Id = DataTools.GetValueOrDefault(fileAttribute.M, "Id"),
                 Filename = DataTools.GetValueOrDefault(fileAttribute.M, "Filename"),
+                FilenameS3 = DataTools.GetValueOrDefault(fileAttribute.M, "FilenameS3"),
                 UploadDateTime = DataTools.GetDateTimeValueOrDefault(fileAttribute.M, "UploadDateTime")
             }).ToList();
         }
 
-        public static GuestUpload ConvertAttributeValuesToGuestUpload(Dictionary<string, AttributeValue> attributeValues)
+        public static GuestUpload ConvertAttributeValuesToGuestUpload(
+            Dictionary<string, AttributeValue> attributeValues)
         {
             return new GuestUpload
             {
@@ -86,7 +95,8 @@ namespace NextCuisine.Data
         /// </summary>
         /// <param name="attributeValues"></param>
         /// <returns>Populated Model Object</returns>
-        public static GuestProfile ConvertAttributeValuesToGuestProfile(Dictionary<string, AttributeValue> attributeValues)
+        public static GuestProfile ConvertAttributeValuesToGuestProfile(
+            Dictionary<string, AttributeValue> attributeValues)
         {
             return new GuestProfile
             {
@@ -129,6 +139,35 @@ namespace NextCuisine.Data
             };
         }
 
+        public async Task<PutObjectResponse> UploadGuestFile(GuestUploadFile guestUploadFile, Stream fileReadStream)
+        {
+            return await _aws.S3.PutObjectAsync(new PutObjectRequest()
+            {
+                BucketName = _aws.UploadsBucketName,
+                InputStream = fileReadStream,
+                Key = guestUploadFile.FilenameS3
+            });
+        }
+
+        public IActionResult GetGuestFile(GuestUploadFile guestUploadFile)
+        {
+            var transferTools = new TransferUtility(_aws.S3);
+            var streamingRequest = new TransferUtilityOpenStreamRequest()
+            {
+                BucketName = _aws.UploadsBucketName,
+                Key = guestUploadFile.FilenameS3,
+            };
+
+            using (var guestFileStream =
+                   transferTools.OpenStreamAsync(_aws.UploadsBucketName, guestUploadFile.FilenameS3))
+            {
+                return new FileStreamResult(guestFileStream.Result, "application/octet-stream")
+                {
+                    FileDownloadName = guestUploadFile.Filename
+                };
+            }
+        }
+
         public async Task<List<GuestUpload>> GetUploads()
         {
             var uploads = await _aws.Db.ScanAsync(new ScanRequest
@@ -137,6 +176,7 @@ namespace NextCuisine.Data
             });
             return uploads.Items.Select(ConvertAttributeValuesToGuestUpload).ToList();
         }
+
         public async Task<List<GuestUpload>> GetGuestUploads(string uid)
         {
             var scanFilter = new ScanFilter();
@@ -235,6 +275,8 @@ namespace NextCuisine.Data
 
         public Task<UpdateItemResponse> EditUpload(GuestUpload modifiedUpload)
         {
+            var attributes = ConvertUploadToDocument(modifiedUpload).ToAttributeUpdateMap(false);
+            attributes.Remove("id");
             return _aws.Db.UpdateItemAsync(new UpdateItemRequest
             {
                 TableName = "NextCuisine",
@@ -242,17 +284,91 @@ namespace NextCuisine.Data
                 {
                     ["id"] = new AttributeValue() { S = modifiedUpload.Id }
                 },
-                AttributeUpdates = ConvertUploadToDocument(modifiedUpload).ToAttributeUpdateMap(false)
+                AttributeUpdates = attributes
             });
         }
 
-        public Task<DeleteItemResponse> DeleteUpload(string id)
+        public async Task<bool> DeleteUpload(GuestUpload? upload)
         {
-            return _aws.Db.DeleteItemAsync(new DeleteItemRequest()
+            try
             {
-                TableName = "NextCuisine",
-                Key = new Dictionary<string, AttributeValue>() { { "id", new AttributeValue() { S = id } } }
-            });
+                await _aws.Db.DeleteItemAsync(new DeleteItemRequest()
+                {
+                    TableName = "NextCuisine",
+                    Key = new Dictionary<string, AttributeValue>() { { "id", new AttributeValue() { S = upload.Id } } }
+                });
+                foreach (GuestUploadFile file in upload.Files)
+                {
+                    await _aws.S3.DeleteObjectAsync(new DeleteObjectRequest()
+                    {
+                        BucketName = _aws.UploadsBucketName,
+                        Key = file.FilenameS3
+                    });
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<GuestUpload?> GetUploadByFileId(string fileId)
+        {
+            try
+            {
+                GuestUpload? uploadMatch = null;
+                // Retrieve the upload with the matching file ID
+                // TODO Implement a query for better processing
+                var uploads = await GetPublicUploads();
+                uploads.ForEach(upload =>
+                {
+                    upload.Files.ForEach(file =>
+                    {
+                        if (file.Id == fileId)
+                        {
+                            uploadMatch = upload;
+                        }
+                    });
+                });
+                // return object
+                return uploadMatch;
+            }
+            catch (Exception ex)
+            {
+                // issue during search
+                Debug.WriteLine(ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> DeleteUploadFile(string fileId)
+        {
+            try
+            {
+                // find upload
+                var upload = await GetUploadByFileId(fileId);
+                if (upload == null) throw new AggregateException("Cannot find candidate file deletion upload.");
+                // remove from blob storage
+                var s3Filename = upload.Files.First(uf => uf.Id == fileId).FilenameS3;
+                Debug.WriteLine($"Deleting: {s3Filename}");
+                await _aws.S3.DeleteObjectAsync(new DeleteObjectRequest
+                {
+                    BucketName = _aws.UploadsBucketName,
+                    Key = s3Filename,
+                });
+                // remove from upload list
+                upload.Files.Remove(upload.Files.Find(uf => uf.Id == fileId) ?? throw new InvalidOperationException());
+                // commit changes
+                await EditUpload(upload);
+                return true;
+            }
+            catch (Exception e)
+            {
+                // failed file deletion
+                Debug.WriteLine(e);
+                return false;
+            }
         }
     }
 }

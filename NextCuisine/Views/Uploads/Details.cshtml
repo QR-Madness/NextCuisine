@@ -1,8 +1,23 @@
-﻿@model dynamic
+﻿@model GuestUpload
 
 @{
-    ViewBag.Title = "Guest Upload View";
+    ViewBag.Title = Model.Title + " - NextCuisine Guest Upload";
     Layout = "_Layout";
 }
 
-<h2>Guest Upload View</h2>
+<h2>@Model.Title</h2>
+<p>@Model.ShortDescription</p>
+@if (Model.Files.Count > 0)
+{
+    @foreach (GuestUploadFile uploadFile in Model.Files)
+    {
+        <p>ID = @uploadFile.Id</p>
+        <p>S3 = @uploadFile.FilenameS3</p>
+        <button asp-area="" asp-controller="Uploads" asp-action="Download" asp-route-id="@Model.Id" asp-route-fileId="@uploadFile.Id">
+            Download @uploadFile.Filename
+        </button>
+        <a asp-area="" asp-controller="Uploads" asp-action="Download" asp-route-id="@Model.Id" asp-route-fileId="@uploadFile.Id">
+            Download @uploadFile.Filename
+        </a>
+    }
+}

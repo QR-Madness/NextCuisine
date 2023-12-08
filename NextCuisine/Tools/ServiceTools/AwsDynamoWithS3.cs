@@ -9,8 +9,8 @@ namespace NextCuisine.Tools.ServiceTools
 {
     public class AwsDynamoWithS3
     {
-        public string PrivateBucketName = "nc-uploads-306";
-        public string StaticBucketName = "nc-static-306";
+        public string UploadsBucketName = "nc-uploads-306";
+        //public string StaticBucketName = "nc-static-306";
         private readonly RegionEndpoint _s3Region = RegionEndpoint.USEast1;
         public AmazonDynamoDBClient Db;
         public AmazonS3Client S3;

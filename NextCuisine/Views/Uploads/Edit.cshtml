@@ -30,11 +30,26 @@
     </textarea>
 
     <h4>Upload Some Files</h4>
-    <input type="file" name="FileInput" />
+    <input type="file" name="FileInput" multiple />
 
-    @Html.DropDownListFor(model => model.Visibility, GetVisibilityList(), "", new { @class = "form-control", @name = "Visibility"})
+    @Html.DropDownListFor(model => model.Visibility, GetVisibilityList(), "", new { @class = "form-control", @name = "Visibility" })
 
-    <button type="submit">Edit</button>
+    <script type="text/javascript">
+        function deleteFile(id) {
+            document.getElementById(id).value = "Deleted"
+        }
+    </script>
+
+    @foreach (var file in Model.Files)
+    {
+        <p>@file.Filename</p>
+        <a target="_blank" href="/Uploads/DeleteFile/@file.Id">
+            <button id="file-delete-btn-@file.Id" onclick="deleteFile('file-delete-btn-@file.Id')" type="button">
+                Delete File
+            </button>
+        </a>
+    }
+    <button type="submit">Save Changes</button>
     <p>@ViewData["LoadText"]</p>
 </form>
 

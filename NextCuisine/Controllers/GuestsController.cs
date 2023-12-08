@@ -84,7 +84,8 @@ namespace NextCuisine.Controllers
                 // add an empty user profile
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                GuestSessionCreate(guest.Uid, guest.Username);
+                return RedirectToAction(nameof(Details));
             }
 
             return View(guest);

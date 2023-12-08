@@ -12,6 +12,8 @@
     <div>
         <h2>@upload.Title</h2>
         <p>@upload.ShortDescription</p>
+        <a asp-controller="Uploads" asp-action="Details" asp-route-id="@upload.Id">View</a>
+
         @if (upload.OwnerUid == Context.Session.GetString("uid"))
         {
             <a asp-controller="Uploads" asp-action="Edit" asp-route-id="@upload.Id">Edit my Upload</a>
