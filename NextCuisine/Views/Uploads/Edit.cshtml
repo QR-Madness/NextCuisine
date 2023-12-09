@@ -22,7 +22,7 @@
 <h2>Editing @Model.Title</h2>
 <form method="post" enctype="multipart/form-data" class="upload-edit-form">
     @Html.AntiForgeryToken()
-    <input asp-for="Title" placeholder="Upload Title" maxlength="80" class="upload-title-input"/>
+    <input asp-for="Title" placeholder="Upload Title" maxlength="80" class="upload-title-input" />
     <br />
     <input asp-for="ShortDescription" placeholder="Write a short Description" maxlength="500" />
     <br />
@@ -40,7 +40,7 @@
 
     <script type="text/javascript">
         function deleteFile(id) {
-            document.getElementById(id).value = "Deleted"
+            document.getElementById(id).textContent = "Deleted";
         }
     </script>
 

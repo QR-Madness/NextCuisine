@@ -14,7 +14,11 @@
     {
         var uploadFileCount = upload.Files.Count;
         var uploadRatingCount = upload.Feedback.Count;
-        var uploadRatingAverage = upload.Feedback.Average(f => int.Parse(f.Rating));
+        var uploadRatingAverage = 0.0;
+        if (uploadRatingCount > 0)
+        {
+            uploadRatingAverage = upload.Feedback.Average(f => int.Parse(f.Rating));
+        }
 
         <div class="upload-item">
             <h2>@upload.Title</h2>

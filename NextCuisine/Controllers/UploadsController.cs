@@ -27,7 +27,7 @@ namespace NextCuisine.Controllers
         }
 
         // GET: UploadsController
-        [HttpGet("/private")]
+        [HttpGet]
         public async Task<ViewResult> PrivateUploads()
         {
             List<GuestUpload> publicUploads = await _awsContext.GetPrivateUploads(HttpContext.Session.GetString("uid") ?? throw new InvalidOperationException());
@@ -35,7 +35,7 @@ namespace NextCuisine.Controllers
         }
 
         // GET: UploadsController
-        [HttpGet("/my-uploads")]
+        [HttpGet]
         public async Task<ActionResult> MyUploads()
         {
             List<GuestUpload> guestUploads = await _awsContext.GetGuestUploads(HttpContext.Session.GetString("uid") ?? throw new InvalidOperationException());
@@ -123,7 +123,7 @@ namespace NextCuisine.Controllers
         // POST: UploadsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind("Title, ShortDescription, Content, Visibility")] GuestUpload upload)
+        public async Task<ActionResult> Create([Bind("Title, ShortDescription, Content,Visibility")] GuestUpload upload)
         {
             try
             {
@@ -207,7 +207,7 @@ namespace NextCuisine.Controllers
                 }
                 // commit object and redirect to feed
                 await _awsContext.EditUpload(originalUpload);
-                return RedirectToAction(nameof(Edit), routeValues: $"/{id}");
+                return View("Details", upload);
             }
             catch (Exception ex)
             {
@@ -242,8 +242,7 @@ namespace NextCuisine.Controllers
                     // delete file
                     await _awsContext.DeleteUploadFile(fileId);
                 }
-
-                return RedirectToAction(nameof(Index));
+                return Redirect($"/uploads/edit/{upload?.Id}");
             }
             catch (Exception ex)
             {

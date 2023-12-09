@@ -10,8 +10,7 @@
 	width: 100%;
 	padding: 2vh 2vw;
 	border-radius: 1rem;
-	background-color: darkslategray;
-	color: white;
+	background-color: lightgray;
 }
 
 	.upload-item a {
@@ -32,6 +31,19 @@
 		}
 
 /* Upload Actions Styling */
+.upload-create-form {
+	display: inline-flex;
+	flex-direction: column;
+	width: 100%;
+}
+.upload-create-title-input {
+	font-size: 1.2rem;
+	background-color: transparent;
+	color: black;
+	border: none;
+	border-bottom: 0.2rem solid black;
+}
+
 .upload-edit-form {
 	background-color: dimgray;
 	color: white;

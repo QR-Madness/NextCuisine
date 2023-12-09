@@ -40,24 +40,24 @@ namespace NextCuisine.Data
                 });
             }
             // transfer feedback 
-            List<Document> uploadFeedbackList = new List<Document>();
-            foreach (GuestUploadFeedback file in upload.Feedback)
+            List<Document> uploadFeedbackDocumentList = new List<Document>();
+            foreach (GuestUploadFeedback feedback in upload.Feedback)
             {
-                uploadFeedbackList.Add(new Document()
+                uploadFeedbackDocumentList.Add(new Document()
                 {
-                    ["Id"] = file.Id,
-                    ["OwnerUid"] = file.OwnerUid,
-                    ["OwnerName"] = file.OwnerName,
-                    ["Content"] = file.Content,
-                    ["Rating"] = file.Rating.ToString(),
-                    ["CreationTime"] = file.CreationTime,
+                    ["Id"] = feedback.Id,
+                    ["OwnerUid"] = feedback.OwnerUid,
+                    ["OwnerName"] = feedback.OwnerName,
+                    ["Content"] = feedback.Content,
+                    ["Rating"] = feedback.Rating,
+                    ["CreationTime"] = feedback.CreationTime,
                 });
             }
             // transfer additional content list
             List<Document> additionalContentDocumentList = new List<Document>();
             foreach (KeyValuePair<string, string> textContentItem in upload.AdditionalContent)
             {
-                uploadFilesDocumentList.Add(new Document()
+                additionalContentDocumentList.Add(new Document()
                 {
                     [textContentItem.Key] = textContentItem.Value
                 });
@@ -73,7 +73,7 @@ namespace NextCuisine.Data
                 ["ShortDescription"] = upload.ShortDescription,
                 ["Content"] = upload.Content,
                 ["Files"] = uploadFilesDocumentList,
-                ["Feedback"] = uploadFeedbackList,
+                ["Feedback"] = uploadFeedbackDocumentList,
                 ["AdditionalContent"] = additionalContentDocumentList
             };
         }
@@ -309,6 +309,7 @@ namespace NextCuisine.Data
             });
             var uploadsAttributes = search.Items;
             var upload = uploadsAttributes.FirstOrDefault();
+            // TODO: create new profile if it's null
             return upload == null ? null : ConvertAttributeValuesToGuestProfile(upload);
         }
 

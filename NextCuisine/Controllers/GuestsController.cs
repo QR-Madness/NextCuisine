@@ -52,14 +52,12 @@ namespace NextCuisine.Controllers
             {
                 return NotFound();
             }
-
             var guest = await _context.Guest
                 .FirstOrDefaultAsync(m => m.Uid == id);
             if (guest == null)
             {
                 return NotFound();
             }
-
             return View(guest);
         }
 
@@ -87,7 +85,6 @@ namespace NextCuisine.Controllers
                 GuestSessionCreate(guest.Uid, guest.Username);
                 return RedirectToAction(nameof(Details));
             }
-
             return View(guest);
         }
 
@@ -103,15 +100,13 @@ namespace NextCuisine.Controllers
         public async Task<IActionResult> Login([Bind("Username,Password")] Guest guest)
         {
             // todo Retrieve the user with the username + password
-            Guest? guestMatch =
-                _context.Guest.FirstOrDefault(g => g.Username == guest.Username && g.Password == guest.Password);
+            Guest? guestMatch = _context.Guest.FirstOrDefault(g => g.Username == guest.Username && g.Password == guest.Password);
             // fail if not match is found
             Debug.WriteLine(guestMatch?.Username);
             if (guestMatch == null)
             {
                 return View(guest);
             }
-
             // authenticate session (via cookies) for 24 hours
             GuestSessionCreate(guestMatch.Uid, guestMatch.Username);
             // redirect to main page
@@ -136,6 +131,10 @@ namespace NextCuisine.Controllers
                 {
                     return RedirectToAction(nameof(Create));
                 }
+                if (guest.Uid != id)
+                {
+                    return Redirect("/");
+                }
                 return View(guest);
             }
             catch (Exception ex)
@@ -147,12 +146,12 @@ namespace NextCuisine.Controllers
         // PATCH: Guests/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Username,Password,RecoveryEmail")] Guest guest)
+        public async Task<IActionResult> Edit([Bind("Uid, Username,Password,RecoveryEmail")] Guest guest)
         {
             try
             {
-                guest.Uid = HttpContext.Session.GetString("uid") ?? throw new AuthenticationException();
-                if (ModelState.IsValid)
+                var uid = HttpContext.Session.GetString("uid") ?? throw new AuthenticationException();
+                if (ModelState.IsValid && uid == guest.Uid)
                 {
                     _context.Update(guest);
                     await _context.SaveChangesAsync();
@@ -173,13 +172,21 @@ namespace NextCuisine.Controllers
             {
                 return NotFound();
             }
-            var guest = await _context.Guest
-                .FirstOrDefaultAsync(m => m.Uid == id);
-            if (guest == null)
+
+            if (id == HttpContext.Session.GetString("uid"))
             {
-                return NotFound();
+                var guest = await _context.Guest
+                    .FirstOrDefaultAsync(m => m.Uid == id);
+                if (guest == null)
+                {
+                    return NotFound();
+                }
+                return View(guest);
             }
-            return View(guest);
+            else
+            {
+                return Redirect("/");
+            }
         }
 
         // POST: Guests/Delete
@@ -189,7 +196,7 @@ namespace NextCuisine.Controllers
         {
             var id = HttpContext.Session.GetString("uid");
             var guest = await _context.Guest.FindAsync(id);
-            if (guest != null)
+            if (guest != null && id == guest.Uid)
             {
                 _context.Guest.Remove(guest);
             }
