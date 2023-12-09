@@ -15,6 +15,7 @@ namespace NextCuisine.Models
         public string ShortDescription { get; set; } = String.Empty;
         public string Content { get; set; } = String.Empty;
         public List<GuestUploadFile> Files { get; set; } = new List<GuestUploadFile>();
+        public List<GuestUploadFeedback> Feedback { get; set; } = new List<GuestUploadFeedback>();
         public Dictionary<string, string> AdditionalContent { get; set; } = new Dictionary<string, string>()
         {
             ["UploadStyle"] = "General"

@@ -10,6 +10,8 @@ using NextCuisine.Tools.ServiceTools;
 using NextCuisine.Tools;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace NextCuisine.Data
 {
@@ -25,10 +27,10 @@ namespace NextCuisine.Data
         /// <returns>Document for DynamoDB storage</returns>
         private Document ConvertUploadToDocument(GuestUpload upload)
         {
+            // transfer upload files
             List<Document> uploadFilesDocumentList = new List<Document>();
             foreach (GuestUploadFile file in upload.Files)
             {
-                Debug.WriteLine(file.Id);
                 uploadFilesDocumentList.Add(new Document()
                 {
                     ["Id"] = file.Id,
@@ -37,8 +39,29 @@ namespace NextCuisine.Data
                     ["UploadDateTime"] = file.UploadDateTime
                 });
             }
-
+            // transfer feedback 
+            List<Document> uploadFeedbackList = new List<Document>();
+            foreach (GuestUploadFeedback file in upload.Feedback)
+            {
+                uploadFeedbackList.Add(new Document()
+                {
+                    ["Id"] = file.Id,
+                    ["OwnerUid"] = file.OwnerUid,
+                    ["OwnerName"] = file.OwnerName,
+                    ["Content"] = file.Content,
+                    ["Rating"] = file.Rating.ToString(),
+                    ["CreationTime"] = file.CreationTime,
+                });
+            }
+            // transfer additional content list
             List<Document> additionalContentDocumentList = new List<Document>();
+            foreach (KeyValuePair<string, string> textContentItem in upload.AdditionalContent)
+            {
+                uploadFilesDocumentList.Add(new Document()
+                {
+                    [textContentItem.Key] = textContentItem.Value
+                });
+            }
             return new Document()
             {
                 ["id"] = upload.Id,
@@ -50,15 +73,9 @@ namespace NextCuisine.Data
                 ["ShortDescription"] = upload.ShortDescription,
                 ["Content"] = upload.Content,
                 ["Files"] = uploadFilesDocumentList,
+                ["Feedback"] = uploadFeedbackList,
                 ["AdditionalContent"] = additionalContentDocumentList
             };
-            foreach (KeyValuePair<string, string> textContentItem in upload.AdditionalContent)
-            {
-                uploadFilesDocumentList.Add(new Document()
-                {
-                    [textContentItem.Key] = textContentItem.Value
-                });
-            }
         }
 
         private static List<GuestUploadFile> ConvertAttributeValuesToGuestUploadFiles(List<AttributeValue> files)
@@ -72,8 +89,21 @@ namespace NextCuisine.Data
             }).ToList();
         }
 
+        private static List<GuestUploadFeedback> ConvertAttributeValuesToGuestUploadFeedback(List<AttributeValue> feedback)
+        {
+            return feedback.Select(fileAttribute => new GuestUploadFeedback
+            {
+                Id = DataTools.GetValueOrDefault(fileAttribute.M, "Id"),
+                OwnerUid = DataTools.GetValueOrDefault(fileAttribute.M, "OwnerUid"),
+                OwnerName = DataTools.GetValueOrDefault(fileAttribute.M, "OwnerName"),
+                Content = DataTools.GetValueOrDefault(fileAttribute.M, "Content"),
+                Rating = DataTools.GetValueOrDefault(fileAttribute.M, "Rating"),
+                CreationTime = DataTools.GetDateTimeValueOrDefault(fileAttribute.M, "CreationTime"),
+            }).ToList();
+        }
+
         public static GuestUpload ConvertAttributeValuesToGuestUpload(
-            Dictionary<string, AttributeValue> attributeValues)
+                Dictionary<string, AttributeValue> attributeValues)
         {
             return new GuestUpload
             {
@@ -86,6 +116,7 @@ namespace NextCuisine.Data
                 ShortDescription = DataTools.GetValueOrDefault(attributeValues, "ShortDescription"),
                 Content = DataTools.GetValueOrDefault(attributeValues, "Content"),
                 Files = ConvertAttributeValuesToGuestUploadFiles(attributeValues["Files"].L),
+                Feedback = ConvertAttributeValuesToGuestUploadFeedback(attributeValues["Feedback"].L),
                 AdditionalContent = DataTools.ConvertAttributeValuesToDictionary(attributeValues["AdditionalContent"].M)
             };
         }
@@ -149,7 +180,7 @@ namespace NextCuisine.Data
             });
         }
 
-        public IActionResult GetGuestFile(GuestUploadFile guestUploadFile)
+        public async Task<IActionResult> GetGuestFile(GuestUploadFile guestUploadFile)
         {
             var transferTools = new TransferUtility(_aws.S3);
             var streamingRequest = new TransferUtilityOpenStreamRequest()
@@ -157,7 +188,28 @@ namespace NextCuisine.Data
                 BucketName = _aws.UploadsBucketName,
                 Key = guestUploadFile.FilenameS3,
             };
+            using var guestFileStream =
+                transferTools.OpenStreamAsync(_aws.UploadsBucketName, guestUploadFile.FilenameS3);
+            var provider = new FileExtensionContentTypeProvider();
+            var fileContentType = "application/octet-stream";
+            if (provider.TryGetContentType(guestUploadFile.Filename, out string contentType))
+            {
+                fileContentType = contentType;
+            }
+            Debug.WriteLine(fileContentType);
+            var contents = new byte[] { };
+            await guestFileStream.Result.ReadAsync(contents);
+            return new FileContentResult(contents, fileContentType);
+        }
 
+        public IActionResult DownloadGuestFile(GuestUploadFile guestUploadFile)
+        {
+            var transferTools = new TransferUtility(_aws.S3);
+            var streamingRequest = new TransferUtilityOpenStreamRequest()
+            {
+                BucketName = _aws.UploadsBucketName,
+                Key = guestUploadFile.FilenameS3,
+            };
             using (var guestFileStream =
                    transferTools.OpenStreamAsync(_aws.UploadsBucketName, guestUploadFile.FilenameS3))
             {
@@ -366,6 +418,22 @@ namespace NextCuisine.Data
             catch (Exception e)
             {
                 // failed file deletion
+                Debug.WriteLine(e);
+                return false;
+            }
+        }
+
+        public async Task<bool> PostUploadFeedback(string uploadId, GuestUploadFeedback newFeedback)
+        {
+            try
+            {
+                var modifiedUpload = await GetUpload(uploadId) ?? throw new InvalidOperationException();
+                modifiedUpload.Feedback.Add(newFeedback);
+                await EditUpload(modifiedUpload);
+                return true;
+            }
+            catch (Exception e)
+            {
                 Debug.WriteLine(e);
                 return false;
             }

@@ -1,23 +1,85 @@
-﻿@model GuestUpload
+﻿@using Microsoft.AspNetCore.Mvc.RazorPages
+@model GuestUpload
 
 @{
     ViewBag.Title = Model.Title + " - NextCuisine Guest Upload";
     Layout = "_Layout";
 }
 
-<h2>@Model.Title</h2>
-<p>@Model.ShortDescription</p>
-@if (Model.Files.Count > 0)
-{
-    @foreach (GuestUploadFile uploadFile in Model.Files)
+<link type="text/css" rel="stylesheet" href="/css/uploads.css" />
+
+<div class="upload-content">
+    <h2>@Model.Title</h2>
+    <p>@Model.ShortDescription</p>
+
+    <div class="upload-content-text">
+        <p>@Model.Content</p>
+    </div>
+
+    @if (Model.Files.Count > 0)
     {
-        <p>ID = @uploadFile.Id</p>
-        <p>S3 = @uploadFile.FilenameS3</p>
-        <button asp-area="" asp-controller="Uploads" asp-action="Download" asp-route-id="@Model.Id" asp-route-fileId="@uploadFile.Id">
-            Download @uploadFile.Filename
-        </button>
-        <a asp-area="" asp-controller="Uploads" asp-action="Download" asp-route-id="@Model.Id" asp-route-fileId="@uploadFile.Id">
-            Download @uploadFile.Filename
-        </a>
+        <div class="upload-files-list">
+            <h4>Uploaded Files</h4>
+            @foreach (GuestUploadFile uploadFile in Model.Files)
+            {
+                <div class="upload-file">
+                    <p>@uploadFile.Filename</p>
+                    <a asp-area="" asp-controller="Uploads" asp-action="Download" asp-route-id="@Model.Id" asp-route-fileId="@uploadFile.Id">
+                        <button>Download</button>
+                    </a>
+                    <a target="_blank" asp-area="" asp-controller="Uploads" asp-action="ViewUploadFile" asp-route-id="@Model.Id" asp-route-fileId="@uploadFile.Id">
+                        <button>View</button>
+                    </a>
+                </div>
+            }
+        </div>
     }
-}
+</div>
+<div>
+    <div class="upload-feedback">
+        @foreach (GuestUploadFeedback feedbackItem in Model.Feedback)
+        {
+            <div class="feedback-item">
+                <p>
+                    @{
+                        var rating = "";
+                        var ratingNumber = int.Parse(feedbackItem.Rating);
+                        for (int i = 0; i < ratingNumber; i++)
+                        {
+                            rating += "\u2b50";
+                        }
+                    }
+                    @rating
+                </p>
+                <p>@feedbackItem.OwnerName</p>
+                <p>@feedbackItem.Content</p>
+            </div>
+        }
+    </div>
+    <form class="feedback-container" method="post" asp-controller="Uploads" asp-action="DetailsFeedback" asp-route-id="@Model.Id">
+        <h5>Post a Review</h5>
+        <input type="number" name="feedback-rating" min="1" max="5" hidden id="feedback-rating" required />
+        <div class="stars">
+            <input class="star star-5" id="star-5" type="radio" name="star" value="5" onchange="handleRatingChange(this)" />
+            <label class="star star-5" for="star-5"></label>
+            <input class="star star-4" id="star-4" type="radio" name="star" value="4" onchange="handleRatingChange(this)" />
+            <label class="star star-4" for="star-4"></label>
+            <input class="star star-3" id="star-3" type="radio" name="star" value="3" onchange="handleRatingChange(this)" />
+            <label class="star star-3" for="star-3"></label>
+            <input class="star star-2" id="star-2" type="radio" name="star" value="2" onchange="handleRatingChange(this)" />
+            <label class="star star-2" for="star-2" onclick="handleRatingChange"></label>
+            <input class="star star-1" id="star-1" type="radio" name="star" value="1" onchange="handleRatingChange(this)" />
+            <label class="star star-1" for="star-1"></label>
+        </div>
+        <script>
+            function handleRatingChange(input) {
+                const ratingValue = input.value;
+                document.getElementById("feedback-rating").value = ratingValue;
+            }
+        </script>
+        @* Feedback text content *@
+        <textarea name="feedback" required></textarea>
+        @* Submit *@
+        <button type="submit">Post Review</button>
+    </form>
+</div>

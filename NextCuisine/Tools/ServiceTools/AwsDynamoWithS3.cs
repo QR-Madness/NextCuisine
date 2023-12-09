@@ -1,7 +1,7 @@
 ﻿using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.S3;
-using NextCuisine.Config;
+using NextCuisine.Secrets;
 using System.Net.Sockets;
 using ConfigurationManager = System.Configuration.ConfigurationManager;
 

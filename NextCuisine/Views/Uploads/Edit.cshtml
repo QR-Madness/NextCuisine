@@ -32,6 +32,9 @@
     <h4>Upload Some Files</h4>
     <input type="file" name="FileInput" multiple />
 
+    <label>
+        Upload Visibility
+    </label>
     @Html.DropDownListFor(model => model.Visibility, GetVisibilityList(), "", new { @class = "form-control", @name = "Visibility" })
 
     <script type="text/javascript">
@@ -54,5 +57,5 @@
 </form>
 
 <a href="/uploads/delete/@Model.Id">
-    Delete
+    Delete my Upload
 </a>
