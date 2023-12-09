@@ -5,9 +5,25 @@
     Layout = "_Layout";
 }
 
-<h2>Login to your NextCuisine Guest Account</h2>
-<form method="post">
-    <input placeholder="Username" asp-for="Username" value="@Model?.Username"/>
-    <input placeholder="Password" asp-for="Password" value="@Model?.Password"/>
-    <button type="submit">Log me in</button>
-</form>
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card text-center bg-light mb-3" style="max-width: 29rem;">
+      <div class="card-header">Login To Guest Account</div>
+      <div class="card-body">
+
+          <form>    
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingInput" placeholder="User Name" asp-for="Username" value="@Model?.Username">
+                <label for="floatingInput">User Name</label>
+            </div>
+            <p> </p>
+            <div class="form-floating">
+               <input type="password" class="form-control" id="floatingPassword" placeholder="Password" autocomplete="off" asp-for="Password" value="@Model?.Password">
+               <label for="floatingPassword">Password</label>
+            </div>
+            <p> </p>
+            <button type="submit" class="btn btn-outline-dark">Login</button>
+           </form>
+
+      </div>
+    </div>
+</div>

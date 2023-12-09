@@ -63,6 +63,10 @@ namespace NextCuisine.Controllers
             return View(guest);
         }
 
+        public IActionResult Test()
+        {
+            return View();
+        }
         // GET: Guests/Create
         public IActionResult Create()
         {
