@@ -3,30 +3,36 @@
     Layout = "_Layout";
 }
 
-<h2>Edit my Profile</h2>
-
-<form method="post"  controller="Profile"  action="EditPost">
+ <p> </p>
+ <div class=" d-flex justify-content-end align-items-end">
+     <a class="badge bg-danger" controller="Guests" action="Logout">Logout</a>
+ </div>
+        
+<h2>My Profile</h2>
+<div class="container">
+     <p> </p>
     @* Personal Info *@
-    <h4>Name</h4>
-    <input   for="Name" placeholder="Name" />
-    <h3>Bio</h3>
-    <textarea  for="Bio" placeholder="Write a little snippet about yourself.">
-        @Model.Bio
-    </textarea>
+    <h2>Name</h2>
+    <p>
+        Bio
+    </p>
+     <p> </p>
     @* Additional Preferences *@
     <h4>Favorite Recipes</h4>
-    <textarea  for="FavoriteRecipes" placeholder="List some of the good recipes you've come by?">
-        @Model.FavoriteRecipes
-    </textarea>
+    <p>
+        FavoriteRecipes
+    </p>
+     <p> </p>
     <h4>Favorite Snacks</h4>
-    <textarea  for="FavoriteSnacks" placeholder="What are your go-to snacks?">
-        @Model.FavoriteSnacks
-    </textarea>
+    <p>
+        FavoriteSnacks
+    </p>
+    <p> </p>
     <h4>Good Combos</h4>
-    <textarea  for="GoodCombos" placeholder="What are some good, or suprising flavor combos you've come across?">
-        @Model.GoodCombos
-    </textarea>
-    @* Submit *@
-    <button type="submit">Save</button>
-</form>
+    <p>
+        GoodCombos
+    </p>
+</div>
 
+        <a class="badge bg-dark" controller="Profile" action="EditPage" route-id>Edit my Profile</a> |
+        <a class="badge bg-dark" controller="Guests" action="Edit">Account Settings</a>

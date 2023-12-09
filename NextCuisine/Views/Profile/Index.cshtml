@@ -4,27 +4,32 @@
     ViewBag.Title = "My Profile";
     Layout = "_Layout";
 }
+<p> </p>
+<div class=" d-flex justify-content-end align-items-end">
 @if (Context.Session.GetString("uid") == Model.Uid)
 {
-    <a asp-controller="Guests" asp-action="Logout">Logout</a>
+        <a class="badge bg-danger" asp-controller="Guests" asp-action="Logout">Logout</a>
 }
+</div>
 <h2>My Profile</h2>
-<div>
+<div  class="container">
     @* Personal Info *@
     <h2>@Model.Name</h2>
     <p>
         @Model.Bio
     </p>
-
+     <p> </p>
     @* Additional Preferences *@
     <h4>Favorite Recipes</h4>
     <p>
         @Model.FavoriteRecipes
     </p>
+     <p> </p>
     <h4>Favorite Snacks</h4>
     <p>
         @Model.FavoriteSnacks
     </p>
+     <p> </p>
     <h4>Good Combos</h4>
     <p>
         @Model.GoodCombos
@@ -32,6 +37,8 @@
 </div>
 @if (Context.Session.GetString("uid") == Model.Uid)
 {
-    <a asp-controller="Profile" asp-action="EditPage" asp-route-id="@Model.Uid">Edit my Profile</a>
-    <a asp-controller="Guests" asp-action="Edit">Account Settings</a>
+    <a class="badge bg-dark" asp-controller="Profile" asp-action="EditPage" asp-route-id="@Model.Uid">Edit my Profile</a>
+    <a class="badge bg-dark" asp-controller="Guests" asp-action="Edit">Account Settings</a>
 }
+
+ 
