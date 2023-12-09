@@ -5,25 +5,28 @@
     Layout = "_Layout";
 }
 
-<h2>Upload</h2>
+<link type="text/css" rel="stylesheet" href="/css/uploads.css" />
 
 <form method="post" enctype="multipart/form-data" asp-controller="Uploads" asp-action="Create">
+    <h2>Create an Upload</h2>
+
     @Html.AntiForgeryToken()
     <p>@ViewData["LoadText"]</p>
 
-    <input asp-for="Title" placeholder="Upload Title" maxlength="80" />
-    <br />
-    <input asp-for="ShortDescription" placeholder="Write a short Description" maxlength="500" />
-    <br />
+    <input asp-for="Title" placeholder="Upload Title" maxlength="80"/>
+    <br/>
+    <input asp-for="ShortDescription" placeholder="Write a short Description" maxlength="500"/>
+    <br/>
     <textarea asp-for="Content" placeholder="Write what's on your mind..." rows="15" style="width: 100%;">
     </textarea>
 
     <h4>Upload Some Files</h4>
-    <input type="file" name="FileInput" multiple />
-    <button type="submit">Post</button>
+    <input type="file" name="FileInput" multiple/>
 
     <select asp-for="Visibility">
         <option value="Public">Public</option>
         <option value="Private">Private</option>
     </select>
+
+    <button type="submit">Post</button>
 </form>
