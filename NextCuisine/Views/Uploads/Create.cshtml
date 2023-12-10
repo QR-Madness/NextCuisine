@@ -1,15 +1,16 @@
-﻿@model GuestUpload
+@model GuestUpload
 
 @{
     ViewBag.Title = "Upload";
     Layout = "_Layout";
 }
 
-    <p> </p>
-<h2>Upload</h2>
+<link type="text/css" rel="stylesheet" href="/css/uploads.css" />
 
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" asp-controller="Uploads" asp-action="Create" class="upload-create-form">
+    <h2>Create an Upload</h2>
     @Html.AntiForgeryToken()
+  
     <div class="form-group">
          <input asp-for="Title" placeholder="Upload Title" maxlength="80"  class="form-control"/>
      </div>
@@ -30,8 +31,8 @@
     <p> </p>
 
     <div class="form-group">
-        <h4>Upload Some Files</h4>
-        <input type="file" name="FileInput" />
+      <h4>Upload Some Files</h4>
+      <input type="file" name="FileInput" multiple />
     </div>
 
     <p> </p>
@@ -54,5 +55,6 @@
         <p> </p>
         <button class="btn btn-outline-dark" type="submit">Post</button>
      </div>
+
 </form>
 
