@@ -2,6 +2,27 @@
     ViewData["Title"] = "Home Page";
 }
 <p> </p>
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<div class="container text-center">
+    <h1 class="display-4">Welcome to Next Cuisine</h1>
+
+    <div class="container" name="top">
+        <p> 
+            Here, you can dive into the world of gastronomy and share your culinary adventures. Upload your favorite recipes, 
+            write reviews about your latest dining experiences, or engage in food-related discussions. Whether you’re a seasoned 
+            chef or a food enthusiast, there’s something for everyone. Join us as we explore the art of cooking, one dish at a time.
+            Bon Appétit! 🥘</p>
+
+    </div>
+    
+   
+    <div class="row">
+        <div class="col" name="left">
+             <a class="btn btn-outline-dark" asp-controller="Guests" asp-action="Login">Login</a>
+            <p> </p>
+        </div>
+
+        <div class="col" name="right">
+           <a class="btn btn-outline-dark" asp-controller="Guests" asp-action="Create">Register</a>
+        </div>
+    </div>
 </div>
