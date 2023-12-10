@@ -18,7 +18,6 @@ namespace NextCuisine.Data
     public class AwsContext
     {
         private readonly AwsDynamoWithS3 _aws = new();
-        public AwsDynamoWithS3 Aws => _aws;
 
         /// <summary>
         /// Convert's a guest's upload 
