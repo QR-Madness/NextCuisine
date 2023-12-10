@@ -5,30 +5,53 @@
     Layout = "_Layout";
 }
 
+<p> </p>
 <h2>Edit my Profile</h2>
 
 <form method="post" asp-controller="Profile" asp-action="EditPost">
     @* Personal Info *@
+    <div class="form-group">
     <h4>Name</h4>
-    <input asp-for="Name" placeholder="Name" />
+    <input  asp-for="Name"  class="form-control" placeholder="Name" />
+    </div>
+    <p> </p>
+
+    <div class="form-group">
     <h3>Bio</h3>
-    <textarea asp-for="Bio" placeholder="Write a little snippet about yourself.">
+    <textarea  class="form-control"  asp-for="Bio" placeholder="Write a little snippet about yourself.">
         @Model.Bio
     </textarea>
+    </div>
+
+    <p> </p>
     @* Additional Preferences *@
+    <div class="form-group">
     <h4>Favorite Recipes</h4>
-    <textarea asp-for="FavoriteRecipes" placeholder="List some of the good recipes you've come by?">
+    <textarea  class="form-control" asp-for="FavoriteRecipes" placeholder="List some of the good recipes you've come by?">
         @Model.FavoriteRecipes
     </textarea>
+    </div>
+     
+    <p> </p>
+     <div class="form-group">
     <h4>Favorite Snacks</h4>
-    <textarea asp-for="FavoriteSnacks" placeholder="What are your go-to snacks?">
+    <textarea  class="form-control"  asp-for="FavoriteSnacks" placeholder="What are your go-to snacks?">
         @Model.FavoriteSnacks
     </textarea>
+    </div>
+
+    <p> </p>
+    <div class="form-group">
     <h4>Good Combos</h4>
-    <textarea asp-for="GoodCombos" placeholder="What are some good, or suprising flavor combos you've come across?">
+    <textarea  class="form-control" asp-for="GoodCombos" placeholder="What are some good, or suprising flavor combos you've come across?">
         @Model.GoodCombos
     </textarea>
-    @* Submit *@
-    <button type="submit">Save</button>
+    </div>
+    <p> </p>
+    <div>
+        @* Submit *@
+        <button class="btn btn-outline-dark" type="submit">Save</button>
+    </div>
+    
 </form>
 

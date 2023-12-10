@@ -1,41 +1,43 @@
 ﻿@model NextCuisine.Models.Guest
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Register";
 }
 
-<h1>Create</h1>
 
-<h4>Guest</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+<div class="d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card text-center bg-light mb-3" style="max-width: 29rem;">
+      <div class="card-header">Register Guest</div>
+      <div class="card-body">
+
+          <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <div class="form-group">
-                <label asp-for="Uid" class="control-label"></label>
-                <input asp-for="Uid" class="form-control" />
-                <span asp-validation-for="Uid" class="text-danger"></span>
-            </div> *@
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control"/>
+             
+            <div class="form-floating">
+                <input asp-for="Username" class="form-control" id="floatingInput" placeholder="User Name"/>
+                <label asp-for="Username" class="control-label">User Name</label>
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
+            <p> </p>
+            <div class="form-floating">
+                <input asp-for="Password" class="form-control" id="floatingPassword" placeholder="Password"/>
+                <label asp-for="Password" class="control-label">Password</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="RecoveryEmail" class="control-label"></label>
-                <input asp-for="RecoveryEmail" class="form-control" />
+            <p> </p>
+            <div class="form-floating">
+                <input asp-for="RecoveryEmail" class="form-control" id="floatingInput" placeholder="RecoveryEmail"/>
+                <label asp-for="RecoveryEmail" class="control-label">Recovery Email</label>
                 <span asp-validation-for="RecoveryEmail" class="text-danger"></span>
             </div>
+            <p> </p>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                 <button type="submit" value="Create" class="btn btn-outline-dark">Register</button>
             </div>
         </form>
+          
+
+      </div>
     </div>
 </div>
 
