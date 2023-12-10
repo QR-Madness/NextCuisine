@@ -4,18 +4,18 @@
     ViewBag.Title = "Guest Uploads";
     Layout = "_Layout";
 }
-
+   <p> </p>
 <h2>Guest Uploads</h2>
 
 @foreach (var upload in Model)
 {
     <div>
         <h2>@upload.Title</h2>
-        <p>@upload.ShortDescription</p>
+        <p class="text-dark">@upload.ShortDescription</p>
         @if (upload.OwnerUid == Context.Session.GetString("uid"))
         {
-            <a asp-controller="Uploads" asp-action="Edit" asp-route-id="@upload.Id">Edit my Upload</a>
-            <a asp-controller="Uploads" asp-action="Delete" asp-route-id="@upload.Id">Delete</a>
+            <a asp-controller="Uploads" class="badge bg-dark" asp-action="Edit" asp-route-id="@upload.Id">Edit my Upload</a>   
+            <a asp-controller="Uploads" class="badge bg-danger" asp-action="Delete" asp-route-id="@upload.Id">Delete</a>
         }
     </div>
 }
