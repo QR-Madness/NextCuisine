@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Views\Home\Photos\login.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AWSSDK.Core" Version="3.7.300.11" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.300.11" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.300" />
@@ -37,6 +41,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\Guests\Login.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Home\Photos\" />
   </ItemGroup>
 
 </Project>

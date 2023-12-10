@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextCuisine", "NextCuisine\NextCuisine.csproj", "{04609372-6CB3-43D2-9F28-A22D1D1ECEEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextCuisine", "NextCuisine\NextCuisine.csproj", "{04609372-6CB3-43D2-9F28-A22D1D1ECEEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextCuisineApi", "NextCuisineApi\NextCuisineApi.csproj", "{B5101E6C-0477-454B-AAFB-240C11157726}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{04609372-6CB3-43D2-9F28-A22D1D1ECEEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04609372-6CB3-43D2-9F28-A22D1D1ECEEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04609372-6CB3-43D2-9F28-A22D1D1ECEEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5101E6C-0477-454B-AAFB-240C11157726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5101E6C-0477-454B-AAFB-240C11157726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5101E6C-0477-454B-AAFB-240C11157726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5101E6C-0477-454B-AAFB-240C11157726}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
