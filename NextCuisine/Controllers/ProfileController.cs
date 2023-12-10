@@ -12,10 +12,6 @@ namespace NextCuisine.Controllers
     public class ProfileController : Controller
     {
         private readonly AwsContext _awsContext = new();
-        public IActionResult Test()
-        {
-            return View();
-        }
 
         // GET: ProfileController
         public async Task<ActionResult> Index()
@@ -56,6 +52,7 @@ namespace NextCuisine.Controllers
 
         // GET: ProfileController/Edit
         [HttpPost("/edit")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost([Bind("Name, Bio, FavoriteRecipes, FavoriteSnacks, GoodCombos")] GuestProfile modifiedProfile)
         {
             try

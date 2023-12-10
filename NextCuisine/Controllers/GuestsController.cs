@@ -37,14 +37,6 @@ namespace NextCuisine.Controllers
             HttpContext.Session.Remove("username");
         }
 
-        // GET: Guests
-        public async Task<IActionResult> Index()
-        {
-            return _context.Guest != null
-                ? View(await _context.Guest.ToListAsync())
-                : Problem("Entity set 'NextCuisineContext.Guest'  is null.");
-        }
-
         // GET: Guests/Details/5
         public async Task<IActionResult> Details(string id)
         {
@@ -61,10 +53,6 @@ namespace NextCuisine.Controllers
             return View(guest);
         }
 
-        public IActionResult Test()
-        {
-            return View();
-        }
         // GET: Guests/Create
         public IActionResult Create()
         {
@@ -204,10 +192,10 @@ namespace NextCuisine.Controllers
             {
                 _context.Guest.Remove(guest);
             }
+
             await _context.SaveChangesAsync();
             // TODO Delete Profile and S3 Uploads
-
-            return RedirectToAction(nameof(Index));
+            return Redirect("/");
         }
 
         private bool GuestExists(string id)

@@ -68,18 +68,19 @@
         @if (Model.Feedback.Count(f => f.OwnerUid == Context.Session.GetString("uid")) < 1)
         {
             <form class="feedback-container" method="post" asp-controller="Uploads" asp-action="DetailsFeedback" asp-route-id="@Model.Id">
+                @Html.AntiForgeryToken()
                 <h5>Post a Review</h5>
-                <input type="number" name="feedback-rating" min="1" max="5" hidden id="feedback-rating" required />
+                <input type="number" name="feedback-rating" min="1" max="5" hidden id="feedback-rating" required/>
                 <div class="stars">
-                    <input class="star star-5" id="star-5" type="radio" name="star" value="5" onchange="handleRatingChange(this)" />
+                    <input class="star star-5" id="star-5" type="radio" name="star" value="5" onchange="handleRatingChange(this)"/>
                     <label class="star star-5" for="star-5"></label>
-                    <input class="star star-4" id="star-4" type="radio" name="star" value="4" onchange="handleRatingChange(this)" />
+                    <input class="star star-4" id="star-4" type="radio" name="star" value="4" onchange="handleRatingChange(this)"/>
                     <label class="star star-4" for="star-4"></label>
-                    <input class="star star-3" id="star-3" type="radio" name="star" value="3" onchange="handleRatingChange(this)" />
+                    <input class="star star-3" id="star-3" type="radio" name="star" value="3" onchange="handleRatingChange(this)"/>
                     <label class="star star-3" for="star-3"></label>
-                    <input class="star star-2" id="star-2" type="radio" name="star" value="2" onchange="handleRatingChange(this)" />
+                    <input class="star star-2" id="star-2" type="radio" name="star" value="2" onchange="handleRatingChange(this)"/>
                     <label class="star star-2" for="star-2" onclick="handleRatingChange"></label>
-                    <input class="star star-1" id="star-1" type="radio" name="star" value="1" onchange="handleRatingChange(this)" />
+                    <input class="star star-1" id="star-1" type="radio" name="star" value="1" onchange="handleRatingChange(this)"/>
                     <label class="star star-1" for="star-1"></label>
                 </div>
                 <script>
