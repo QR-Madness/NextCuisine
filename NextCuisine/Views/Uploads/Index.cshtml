@@ -1,21 +1,44 @@
-﻿@model List<GuestUpload>
+@model List<GuestUpload>
 
 @{
     ViewBag.Title = "Guest Uploads";
     Layout = "_Layout";
 }
-   <p> </p>
+<link type="text/css" rel="stylesheet" href="/css/uploads.css" />
+
 <h2>Guest Uploads</h2>
 
-@foreach (var upload in Model)
-{
-    <div>
-        <h2>@upload.Title</h2>
-        <p class="text-dark">@upload.ShortDescription</p>
-        @if (upload.OwnerUid == Context.Session.GetString("uid"))
+<div class="uploads">
+    @foreach (var upload in Model)
+    {
+        var uploadFileCount = upload.Files.Count;
+        var uploadRatingCount = upload.Feedback.Count;
+        var uploadRatingAverage = 0.0;
+        if (uploadRatingCount > 0)
         {
-            <a asp-controller="Uploads" class="badge bg-dark" asp-action="Edit" asp-route-id="@upload.Id">Edit my Upload</a>   
-            <a asp-controller="Uploads" class="badge bg-danger" asp-action="Delete" asp-route-id="@upload.Id">Delete</a>
+            uploadRatingAverage = upload.Feedback.Average(f => int.Parse(f.Rating));
         }
-    </div>
-}
+
+        <div class="upload-item">
+            <h2>@upload.Title</h2>
+            <p>@upload.ShortDescription</p>
+            <a asp-controller="Uploads" asp-action="Details" asp-route-id="@upload.Id">Read More</a>
+            <div>
+                @if (uploadRatingCount < 1)
+                {
+                    <p>There are no ratings yet.</p>
+                }
+                else
+                {
+                    <p>@($"{uploadRatingCount} rating(s) with an average of {uploadRatingAverage:0.0}/5.0")</p>
+                }
+            </div>
+            @* Owner Options *@
+            @if (upload.OwnerUid == Context.Session.GetString("uid"))
+            {
+                <a asp-controller="Uploads" asp-action="Edit" asp-route-id="@upload.Id">Edit my Upload</a>
+                <a asp-controller="Uploads" asp-action="Delete" asp-route-id="@upload.Id">Delete</a>
+            }
+        </div>
+    }
+</div>

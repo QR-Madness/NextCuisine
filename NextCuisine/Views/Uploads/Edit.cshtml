@@ -1,4 +1,4 @@
-﻿@model GuestUpload
+@model GuestUpload
 
 @functions {
     private IEnumerable<SelectListItem> GetVisibilityList()
@@ -16,9 +16,13 @@
     ViewBag.Title = "Edit Upload";
     Layout = "_Layout";
 }
-
- <p> </p>
-<h2>Edit Upload</h2>
+      
+<link type="text/css" rel="stylesheet" href="/css/uploads.css" />
+      
+<p> </p>
+      
+<h2>Editing @Model.Title</h2>
+      
 <form method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
     <div class="form-group">
@@ -38,11 +42,26 @@
             @Model.Content
         </textarea>
     </div>
-
+  
+    <script type="text/javascript">
+        function deleteFile(id) {
+            document.getElementById(id).textContent = "Deleted";
+        }
+    </script>
+    @foreach (var file in Model.Files)
+    {
+        <p>@file.Filename</p>
+        <a target="_blank" href="/Uploads/DeleteFile/@file.Id">
+            <button id="file-delete-btn-@file.Id" onclick="deleteFile('file-delete-btn-@file.Id')" type="button">
+                Delete File
+            </button>
+        </a>
+    }
+  
     <p> </p>
     <div class="form-group">
         <h4>Upload Some Files</h4>
-        <input type="file" name="FileInput" />
+        <input type="file" name="FileInput" multiple />
     </div>
     <p> </p>
 

@@ -1,7 +1,7 @@
 ﻿using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.S3;
-using NextCuisine.Config;
+using NextCuisine.Secrets;
 using System.Net.Sockets;
 using ConfigurationManager = System.Configuration.ConfigurationManager;
 
@@ -9,8 +9,8 @@ namespace NextCuisine.Tools.ServiceTools
 {
     public class AwsDynamoWithS3
     {
-        public string PrivateBucketName = "nc-uploads-306";
-        public string StaticBucketName = "nc-static-306";
+        public string UploadsBucketName = "nc-uploads-306";
+        //public string StaticBucketName = "nc-static-306";
         private readonly RegionEndpoint _s3Region = RegionEndpoint.USEast1;
         public AmazonDynamoDBClient Db;
         public AmazonS3Client S3;
