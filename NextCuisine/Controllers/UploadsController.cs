@@ -19,10 +19,6 @@ namespace NextCuisine.Controllers
     {
         private readonly AwsContext _awsContext = new();
 
-        public IActionResult Test()
-        {
-            return View();
-        }
         // GET: UploadsController
 
         public async Task<ActionResult> Index()

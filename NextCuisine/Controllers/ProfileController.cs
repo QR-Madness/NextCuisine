@@ -12,10 +12,6 @@ namespace NextCuisine.Controllers
     public class ProfileController : Controller
     {
         private readonly AwsContext _awsContext = new();
-        public IActionResult Test()
-        {
-            return View();
-        }
 
         // GET: ProfileController
         public async Task<ActionResult> Index()
