@@ -1,11 +1,10 @@
 ﻿using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.S3;
-using NextCuisine.Secrets;
+using NextCuisineApi.Secrets;
 using System.Net.Sockets;
-using ConfigurationManager = System.Configuration.ConfigurationManager;
 
-namespace NextCuisine.Tools.ServiceTools
+namespace NextCuisineApi.Tools.ServiceTools
 {
     public class AwsDynamoWithS3
     {

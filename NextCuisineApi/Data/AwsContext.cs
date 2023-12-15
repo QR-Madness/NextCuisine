@@ -1,19 +1,15 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
-using Amazon.DynamoDBv2;
+﻿using System.Diagnostics;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
-using Amazon.S3;
 using Amazon.S3.Model;
-using NextCuisine.Models;
-using NextCuisine.Tools.ServiceTools;
-using NextCuisine.Tools;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 using Microsoft.AspNetCore.StaticFiles;
+using NextCuisineApi.Models;
+using NextCuisineApi.Tools;
+using NextCuisineApi.Tools.ServiceTools;
 
-namespace NextCuisine.Data
+namespace NextCuisineApi.Data
 {
     public class AwsContext
     {

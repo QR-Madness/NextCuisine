@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NextCuisine.Tools;
+using NextCuisineApi.Tools;
 
-namespace NextCuisine.Models
+namespace NextCuisineApi.Models
 {
     [Table("guests")]
     public class Guest

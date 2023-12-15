@@ -1,7 +1,7 @@
-﻿using NextCuisine.Tools;
+﻿using NextCuisineApi.Tools;
 using static System.String;
 
-namespace NextCuisine.Models
+namespace NextCuisineApi.Models
 {
     public class GuestUploadFeedback
     {

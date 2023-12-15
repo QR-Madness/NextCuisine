@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using Microsoft.VisualBasic;
-using NextCuisine.Tools;
+using NextCuisineApi.Tools;
 
-namespace NextCuisine.Models
+namespace NextCuisineApi.Models
 {
     public class GuestUpload
     {

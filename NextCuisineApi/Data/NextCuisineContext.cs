@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using NextCuisine.Models;
+using NextCuisineApi.Models;
 
 namespace NextCuisine.Data
 {
@@ -14,6 +14,6 @@ namespace NextCuisine.Data
         {
         }
 
-        public DbSet<NextCuisine.Models.Guest> Guest { get; set; } = default!;
+        public DbSet<Guest> Guest { get; set; } = default!;
     }
 }

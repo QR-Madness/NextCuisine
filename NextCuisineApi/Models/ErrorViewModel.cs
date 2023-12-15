@@ -1,4 +1,4 @@
-namespace NextCuisine.Models
+namespace NextCuisineApi.Models
 {
     public class ErrorViewModel
     {

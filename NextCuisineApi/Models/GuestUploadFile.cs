@@ -1,6 +1,6 @@
-﻿using NextCuisine.Tools;
+﻿using NextCuisineApi.Tools;
 
-namespace NextCuisine.Models
+namespace NextCuisineApi.Models
 {
     public class GuestUploadFile
     {

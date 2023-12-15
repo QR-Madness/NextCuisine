@@ -1,7 +1,7 @@
 ﻿using Amazon.DynamoDBv2.Model;
 using System.Text;
 
-namespace NextCuisine.Tools
+namespace NextCuisineApi.Tools
 {
     public class DataTools
     {
