@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NextCuisineApi.Models;
 
-namespace NextCuisine.Data
+namespace NextCuisineApi.Data
 {
-    public class NextCuisineContext : DbContext
+    public class NextCuisineApiContext : DbContext
     {
-        public NextCuisineContext (DbContextOptions<NextCuisineContext> options)
+        public NextCuisineApiContext (DbContextOptions<NextCuisineApiContext> options)
             : base(options)
         {
         }

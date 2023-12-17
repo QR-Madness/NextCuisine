@@ -18,6 +18,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.Cookie.Name = "uid";
     options.LoginPath = "/guests/login";
 });
+
 builder.Services.AddDistributedMemoryCache();
 // Configure the user session
 builder.Services.AddSession(options =>
