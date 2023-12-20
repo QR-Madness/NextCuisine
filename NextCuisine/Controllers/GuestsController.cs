@@ -16,6 +16,7 @@ namespace NextCuisine.Controllers
 {
     public class GuestsController : Controller
     {
+        readonly NextCuisineApiClient apiClient = new();
         private readonly NextCuisineContext _context;
         private readonly AwsContext _awsContext = new();
 
@@ -69,13 +70,16 @@ namespace NextCuisine.Controllers
             // todo check for username conflictions
             if (ModelState.IsValid)
             {
-                // add the user to RDS for authentication
-                _context.Add(guest);
-                // add an empty user profile
-
-                await _context.SaveChangesAsync();
-                GuestSessionCreate(guest.Uid, guest.Username);
-                return RedirectToAction(nameof(Details));
+                //    // send the model to the API
+                //    _context.Add(guest);
+                //    await _context.SaveChangesAsync();
+                //    GuestSessionCreate(guest.Uid, guest.Username);
+                var resp = await apiClient.SendJsonAsync(HttpMethod.Put, guest, "/guests");
+                Debug.WriteLine(resp);
+                if (resp.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Details));
+                }
             }
             return View(guest);
         }
